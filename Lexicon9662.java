@@ -1,4 +1,6 @@
-public class Lexicon {
+/* YULIANG DONG cs610 9662 prp */
+
+public class Lexicon9662 {
     private final static int CHARS_TO_SLOTS_RATIO = 15;
 
     private int[] T;
@@ -7,7 +9,7 @@ public class Lexicon {
     private int currentIndex;
 
 
-    public Lexicon(int m) {
+    public Lexicon9662(int m) {
         T = new int[m];
         A = new char[m * CHARS_TO_SLOTS_RATIO];
 
@@ -93,5 +95,21 @@ public class Lexicon {
                 System.out.print(A[i] + "");
             }
         }
+    }
+
+    public void expand() {
+        int[] newT = new int[T.length * 2];
+        char[] newA = new char[A.length * 2];
+
+        for (int i = 0; i < T.length; i++) {
+            newT[i] = T[i];
+        }
+
+        for (int i = 0; i < A.length; i++) {
+            newA[i] = A[i];
+        }
+
+        this.A = newA;
+        this.T = newT;
     }
 }

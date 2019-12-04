@@ -1,6 +1,6 @@
-/**
-* 
-* Author: Yuliang Dong
+/* YULIANG DONG cs610 9662 prp */
+/*
+*
 * Java version: "1.8.0_65"
 * 
 */
@@ -8,8 +8,8 @@
 import java.io.File; 
 import java.util.Scanner; 
 
-public class HashTable {
-    private Lexicon lexicon;
+public class HashTable9662 {
+    private Lexicon9662 lexicon;
 
     private final static String INSERT = "10";
     private final static String DELETE = "11";
@@ -19,7 +19,7 @@ public class HashTable {
     private final static String COMMENT = "15";
 
     public void hashCreate(int m) {
-        lexicon = new Lexicon(m);
+        lexicon = new Lexicon9662(m);
     }
 
     public boolean hashEmpty() {
@@ -47,7 +47,7 @@ public class HashTable {
 
     // Insert the word to the lexicon, no-op if the word already exists
     public void hashInsert(String word) {
-        if (HashTable.hashSearch(this.lexicon, word) != -1) {
+        if (HashTable9662.hashSearch(this.lexicon, word) != -1) {
             return;
         }
         int i = 0;
@@ -56,8 +56,14 @@ public class HashTable {
         while (i < lexSize && !lexicon.isSlotEmpty(hash(word, i, lexSize))) {
             i++;
         }
+        if (i == lexSize) {
+            lexicon.expand();
+            lexSize = lexicon.size();
+            while (i < lexSize && !lexicon.isSlotEmpty(hash(word, i, lexSize))) {
+                i++;
+            }
+        }
         int hashCode = hash(word, i, lexSize);
-        // TODO: expand the table if i == lexSize
         if (hashCode < lexSize) {
             lexicon.insert(word, hashCode);
         }
@@ -66,7 +72,7 @@ public class HashTable {
 
     // Delete the given word from the lexicon, no-op if the word is not in the lexicon
     public void hashDelete(String word) {
-        int i = HashTable.hashSearch(this.lexicon, word);
+        int i = HashTable9662.hashSearch(this.lexicon, word);
         if (i == -1) {
             return;
         }
@@ -74,7 +80,7 @@ public class HashTable {
     }
 
     // Returns the index of the word in the lexicon table, -1 if not exist
-    public static int hashSearch(Lexicon lexicon, String word) {
+    public static int hashSearch(Lexicon9662 lexicon, String word) {
         if (lexicon == null) {
             return -1;
         }
@@ -120,7 +126,7 @@ public class HashTable {
     }
 
     public static void main(String args[]) {
-        HashTable h = new HashTable();
+        HashTable9662 h = new HashTable9662();
         
         try {
             h.hashBatch(args[0]);
