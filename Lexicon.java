@@ -36,11 +36,20 @@ public class Lexicon {
         return T.length;
     }
 
+    public int[] getT() {
+        return T;
+    }
+
+    public char[] getA() {
+        return A;
+    }
+
     public boolean isSlotEmpty(int i) {
         return i < T.length && T[i] == -1;
     }
 
-    public void insert(String word, int i) {
+    public void insert(String word, int hashCode) {
+        T[hashCode] = currentIndex;
         for (char c : word.toCharArray()) {
             A[currentIndex++] = c;
             if (currentIndex >= A.length) {
@@ -52,6 +61,7 @@ public class Lexicon {
             A[currentIndex] = (char) 0; // Is it the right way to set NUL?
             currentIndex++;
         }
+
     }
 
     public boolean isWordExisted(String word, int hashCode) {
@@ -64,5 +74,12 @@ public class Lexicon {
             i++; j++;
         }
         return true;
+    }
+
+    public void delete(int hashCode) {
+        if (hashCode >= T.length) {
+            return;
+        }
+        T[hashCode] = -1;
     }
 }
