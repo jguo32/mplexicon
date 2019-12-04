@@ -11,6 +11,13 @@ import java.util.Scanner;
 public class HashTable {
     private Lexicon lexicon;
 
+    private final static String INSERT = "10";
+    private final static String DELETE = "11";
+    private final static String SEARCH = "12";
+    private final static String PRINT = "13";
+    private final static String CREATE = "14";
+    private final static String COMMENT = "15";
+
     public void hashCreate(int m) {
         lexicon = new Lexicon(m);
     }
@@ -23,7 +30,12 @@ public class HashTable {
         return lexicon != null && !lexicon.isEmpty();
     }
 
-    public void hashPrint() {}
+    public void hashPrint() {
+        if (lexicon == null) {
+            return;
+        }
+        lexicon.prettyPrint();
+    }
 
     private static int hash(String word, int i, int size) {
         int res = 0;
@@ -33,8 +45,9 @@ public class HashTable {
         return (res + i * i) % size;
     }
 
+    // Insert the word to the lexicon, no-op if the word already exists
     public void hashInsert(String word) {
-        if (HashTable.hashSearch(this.lexicon, word)) {
+        if (HashTable.hashSearch(this.lexicon, word) != -1) {
             return;
         }
         int i = 0;
@@ -51,61 +64,70 @@ public class HashTable {
         
     }
 
+    // Delete the given word from the lexicon, no-op if the word is not in the lexicon
     public void hashDelete(String word) {
-        if (!HashTable.hashSearch(this.lexicon, word)) {
+        int i = HashTable.hashSearch(this.lexicon, word);
+        if (i == -1) {
             return;
         }
-        int i = 0;
-        int lexSize = lexicon.size();
-        while (i < lexSize) {
-            int hashCode = hash(word, i, lexSize);
-            if (!lexicon.isSlotEmpty(hashCode) && lexicon.isWordExisted(word, hashCode)) {
-                lexicon.delete(hashCode);
-            }
-            i++;
-        }
+        lexicon.delete(i);
     }
 
-    public static boolean hashSearch(Lexicon lexicon, String word) {
+    // Returns the index of the word in the lexicon table, -1 if not exist
+    public static int hashSearch(Lexicon lexicon, String word) {
+        if (lexicon == null) {
+            return -1;
+        }
         int i = 0;
         int lexSize = lexicon.size();
         while (i < lexSize) {
             int hashCode = hash(word, i, lexSize);
             if (!lexicon.isSlotEmpty(hashCode) && lexicon.isWordExisted(word, hashCode)) {
-                return true;
+                return hashCode;
             }
             i++; // worst case can be linear, e.g. the word doesn't exist
         }
-        return false;
+        return -1;
     }
 
+    // Batch process commands from file
     public void hashBatch(String filename) throws Exception {
         File file = new File(filename); 
         Scanner sc = new Scanner(file); 
 
-        while (sc.hasNextLine()) 
-            System.out.println(sc.nextLine()); 
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine();
+
+            String[] ops = line.split(" ");
+            if (ops[0].equals(CREATE)) {
+                hashCreate(Integer.parseInt(ops[1]));
+            } else if (ops[0].equals(INSERT)) {
+                hashInsert(ops[1]);
+            } else if (ops[0].equals(DELETE)) {
+                hashDelete(ops[1]);
+            } else if (ops[0].equals(SEARCH)) {
+                int hashCode = hashSearch(lexicon, ops[1]);
+                if (hashCode != -1) {
+                    System.out.printf("%s\tfound at slot %d\n", ops[1], hashCode);
+                } else {
+                    System.out.printf("%s\tnot found\n", ops[1]);
+                }
+            } else if (ops[0].equals(PRINT)) {
+                hashPrint();
+            }
+        }
+            
     }
 
     public static void main(String args[]) {
         HashTable h = new HashTable();
-        h.hashCreate(10);
-        h.hashInsert("abcedfsdf");
-        h.hashInsert("a");
-        h.hashInsert("b");
-        h.hashInsert("c");
-        h.hashInsert("a");
+        
         try {
             h.hashBatch(args[0]);
         } catch (Exception e) {
             System.out.println("Batch processing error.");
+            e.printStackTrace();
         }
-        
-        // for (int i = 0; i < h.lexicon.getT().length; i++)
-        //     System.out.println(h.lexicon.getT()[i]);
-
-        // for (int i = 0; i < h.lexicon.getA().length; i++)
-        //     System.out.println(h.lexicon.getA()[i]);
 
     } 
 }

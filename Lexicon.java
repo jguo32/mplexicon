@@ -36,14 +36,6 @@ public class Lexicon {
         return T.length;
     }
 
-    public int[] getT() {
-        return T;
-    }
-
-    public char[] getA() {
-        return A;
-    }
-
     public boolean isSlotEmpty(int i) {
         return i < T.length && T[i] == -1;
     }
@@ -81,5 +73,25 @@ public class Lexicon {
             return;
         }
         T[hashCode] = -1;
+    }
+
+    public void prettyPrint() {
+        System.out.println("\n\tT");
+        for (int i = 0; i < T.length; i++) {
+            if (T[i] == -1) {
+                System.out.printf("%d:\n", i);
+            } else {
+                System.out.printf("%d: %d\n", i, T[i]);
+            }
+        }
+        
+        System.out.print("\nA: ");
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] == (char) 0) {
+                System.out.print("\\");
+            } else {
+                System.out.print(A[i] + "");
+            }
+        }
     }
 }
